@@ -20,3 +20,145 @@ class SakuMahasiswaApp extends StatelessWidget {
     );
   }
 }
+
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  State<HomePage> CreateState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 8, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF1F0E8),
+      body: NestedScrollView(
+        headerSliverBuilder: (context, innerBoxIsScrolled) {
+          return[
+            _buildAestheticHeader(),
+            SliverToBoxAdapter(
+              child: Column(
+                children: [
+                  _buildModernChartBox(),
+                  _buildSimulasiBanner(),
+                ],
+              ), 
+            ),
+            _buildStickyTabBar(),
+          ];
+        },
+        body: TabBarView(
+          controller: _tabController,
+          children: Lint.generate(8, (i) => _buildEmptyState(i + 1)),
+        ),
+      ),
+
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    )
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}
