@@ -49,116 +49,32 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       backgroundColor: const Color(0xFFF1F0E8),
       body: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) {
-          return[
+          return [
             _buildAestheticHeader(),
             SliverToBoxAdapter(
               child: Column(
-                children: [
-                  _buildModernChartBox(),
-                  _buildSimulasiBanner(),
-                ],
-              ), 
+                children: [_buildModernChartBox(), _buildSimulasiBanner()],
+              ),
             ),
             _buildStickyTabBar(),
           ];
         },
         body: TabBarView(
           controller: _tabController,
-          children: Lint.generate(8, (i) => _buildEmptyState(i + 1)),
+          children: List.generate(8, (i) => _buildEmptyState(i + 1)),
         ),
       ),
-
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    )
-
-
-
-
-
-
-
-
-
-
+      // --- TOMBOL TAMBAH NILAI (Versi Lebih Panjang) ---
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {},
+        backgroundColor: const Color(0xFF89A8B2),
+        elevation: 2,
+        icon: const Icon(Icons.add, color: Colors.white),
+        label: const Text(
+          "Tambah Nilai",
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
+    );
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
