@@ -25,7 +25,7 @@ class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> CreateState() => _HomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
@@ -64,7 +64,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         },
         body: TabBarView(
           controller: _tabController,
-          children: List.generate(8, (i) => _buildEmptyState(i + 1)),
+          children: List.generate(8, (i) => _buildEmptState(i + 1)),
         ),
       ),
       // --- TOMBOL TAMBAH NILAI (Versi Lebih Panjang) ---
@@ -176,7 +176,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 titlesData: const FlTitlesData(show: false),
                 lineBarsData: [
                   LineChartBarData(
-                    sport: const [
+                    sports: const [
                       FlSpot(0, 1)
                     ], // Titik tunggal seperti gambar 2
                     isCurved: true,
@@ -193,54 +193,79 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 
+  Widget _buildSimulasiBenner() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFF4E0),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: const Color(0xFFFFE5B4)),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.analytics, color: Colors. orange, size:18),
+          const SizedBox(width: 10),
+          const Expanded(
+            child: Text(
+              "Simulasi: Untuk mencari Target 3.80,Kamu butuh rata-rata A di semester depan",
+              style: TextStyle(
+                  fontSize: 10,
+                  color: Colors.orange,
+                  fontWeight: FontWeight.w500),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
+  Widget _buildStickyTabBar() {
+    return SliverPersistentHeader(
+      pinned: true,
+      delegate: _SliverAppBarDelegate(
+        TabBar(
+          controller: _tabController,
+          isScrollable: true,
+          labelColor: const Color(0xFF89A8B2),
+          unselectedLabelColor: Colors.grey,
+          indicatorColor: const Color(0xFF89A8B2),
+          indicatorWeight: 3,
+          tabs: List.generate(8, (i) => Tab(text: "Semester ${i + 1}")),
+        ),
+      ),
+    );
+  }
 
+  Widget _buildEmptyState(int sem) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.folder_open_rounded,
+              size: 40, color: Colors.grey.shade300),
+          const SizedBox(height: 8),
+          Text("Belum ada data Semester $sem",
+              style: const TextStyle(color: Colors.grey, fontSize: 12)),
+        ],
+      ),
+    );
+  }
+}
 
+class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
+  _SliverAppBarDelegate(this._tabBar);
+  final TabBar _tabBar;
+  @override
+  double get minExtent => _tabBar.preferredSize.height;
+  @override
+  double get maxExtent => _tabBar.preferredSize.height;
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Container(color: const Color(0xFFF1F0E8), child: _tabBar);  
+  }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  @override
+  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) => false;
 }
