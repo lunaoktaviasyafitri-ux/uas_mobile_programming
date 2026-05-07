@@ -53,10 +53,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             _buildAestheticHeader(),
             SliverToBoxAdapter(
               child: Column(
-                children: [
-                  _buildModernChartBox(), 
-                  _buildSimulasiBanner()
-                ],
+                children: [_buildModernChartBox(), _buildSimulasiBenner()],
               ),
             ),
             _buildStickyTabBar(),
@@ -64,18 +61,80 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         },
         body: TabBarView(
           controller: _tabController,
-          children: List.generate(8, (i) => _buildEmptState(i + 1)),
+          children: List.generate(8, (i) => _buildEmptyState(i + 1)),
         ),
       ),
       // --- TOMBOL TAMBAH NILAI (Versi Lebih Panjang) ---
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {},
+        onPressed: () {
+          _showInputForm(context);
+        },
         backgroundColor: const Color(0xFF89A8B2),
         elevation: 2,
         icon: const Icon(Icons.add, color: Colors.white),
-        label:
-           const Text("Tambah Nilai", style: TextStyle(color: Colors.white)),
+        label: const Text(
+          "Tambah Nilai",
+          style: TextStyle(color: Colors.white),
+        ),
       ),
+    
+  void _showInputForm (BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          title: const Text(
+            "Input Nilai Baru",
+            style: TextStyle(fontWeight: FontWeight.bold: Color(0xFF89A8B2)),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                decoration: InputDecoration(
+                  labelText: "Nama Mata Kuliah",
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+              ),
+              const   SizedBox(height: 15),
+              TextField(
+                decoration: InputDecoration(
+                  labelText: "Nilai Huruf (A/B/C)",
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+              ),
+              const SizedBox(height: 15),
+              TextField(
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: "Jumlah SKS",
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                ), 
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Batal", style: TextStyle(color: Colors.grey)),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context); // Tutup dialog
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Data berhasil disimpan")),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF89A8B2),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+              child: const Text("Simpan", style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -104,17 +163,23 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const SizedBox(height: 20),
-              const Text("IPK KUMULATIF",
-                  style: TextStyle(
-                      color: Colors.white70,
-                      letterSpacing: 1.5,
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold)),
-              const Text("4.00"
-                  style: TextStyle(
-                      fontSize:  72,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white)),
+              const Text(
+                "IPK KUMULATIF",
+                style: TextStyle(
+                  color: Colors.white70,
+                  letterSpacing: 1.5,
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const Text(
+                "4.00",
+                style: TextStyle(
+                  fontSize: 72,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -134,16 +199,21 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-          color: Colors.white24, borderRadius: BorderRadius.circular(20)),
+        color: Colors.white24,
+        borderRadius: BorderRadius.circular(20),
+      ),
       child: Row(
         children: [
           Icon(icon, size: 14, color: Colors.white),
           const SizedBox(width: 6),
-          Text(label,
-              style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w500)),
+          Text(
+            label,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
         ],
       ),
     );
@@ -160,13 +230,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text("Tren Nilai Per Semester"
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                  color: Colors.black87)),
-          const SizedBox(
-              height: 100),
+          const Text(
+            "Tren Nilai Per Semester",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+              color: Colors.black87,
+            ),
+          ),
+          const SizedBox(height: 100),
           SizedBox(
             height: 100,
             child: LineChart(
@@ -176,15 +248,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 titlesData: const FlTitlesData(show: false),
                 lineBarsData: [
                   LineChartBarData(
-                    sports: const [
-                      FlSpot(0, 1)
+                    spots: const [
+                      FlSpot(0, 1),
                     ], // Titik tunggal seperti gambar 2
                     isCurved: true,
                     color: const Color(0xFF89A8B2),
                     barWidth: 3,
                     dotData: const FlDotData(show: true),
                   ),
-                ], 
+                ],
               ),
             ),
           ),
@@ -204,15 +276,16 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       ),
       child: Row(
         children: [
-          const Icon(Icons.analytics, color: Colors. orange, size:18),
+          const Icon(Icons.analytics, color: Colors.orange, size: 18),
           const SizedBox(width: 10),
           const Expanded(
             child: Text(
               "Simulasi: Untuk mencari Target 3.80,Kamu butuh rata-rata A di semester depan",
               style: TextStyle(
-                  fontSize: 10,
-                  color: Colors.orange,
-                  fontWeight: FontWeight.w500),
+                fontSize: 10,
+                color: Colors.orange,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
         ],
@@ -242,11 +315,16 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.folder_open_rounded,
-              size: 40, color: Colors.grey.shade300),
+          Icon(
+            Icons.folder_open_rounded,
+            size: 40,
+            color: Colors.grey.shade300,
+          ),
           const SizedBox(height: 8),
-          Text("Belum ada data Semester $sem",
-              style: const TextStyle(color: Colors.grey, fontSize: 12)),
+          Text(
+            "Belum ada data Semester $sem",
+            style: const TextStyle(color: Colors.grey, fontSize: 12),
+          ),
         ],
       ),
     );
@@ -262,8 +340,11 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   double get maxExtent => _tabBar.preferredSize.height;
   @override
   Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return Container(color: const Color(0xFFF1F0E8), child: _tabBar);  
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    return Container(color: const Color(0xFFF1F0E8), child: _tabBar);
   }
 
   @override
