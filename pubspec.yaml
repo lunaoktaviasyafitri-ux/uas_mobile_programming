@@ -22,6 +22,12 @@ dev_dependencies:
 
   flutter_lints: ^3.0.0
 
+flutter_launcher_icons:
+    android: "launcher_icon"
+    ios: true
+    image_path: "assets/images/app_icon.jpeg"
+    min_sdk_android: 21
+
 flutter:
   # WAJIN TRUE agar ikon PDF dan Tambah Nilai muncul
   uses-material-design: true
