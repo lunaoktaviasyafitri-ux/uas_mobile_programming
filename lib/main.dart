@@ -28,8 +28,22 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
+class NilaiMatkul {
+  String nama;
+  String huruf;
+  int sks;
+  int semester;
+  NilaiMatkul(this.nama, this.huruf, this.sks, this.semester);
+}
+
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late TabController _tabController;
+
+  final List<NilaiMatkul> daftarNilai = [];
+  String selectedSemester = "1";
+  final TextEditingController _namaController = TextEditingController();
+  final TextEditingController _sksController = TextEditingController();
+  final TextEditingController _hurufController = TextEditingController();
 
   @override
   void initState() {
@@ -40,6 +54,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   void dispose() {
     _tabController.dispose();
+    _namaController.dispose();
+    _sksController.dispose();
+    _hurufController.dispose();
     super.dispose();
   }
 
@@ -61,58 +78,96 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         },
         body: TabBarView(
           controller: _tabController,
-          children: List.generate(8, (i) => _buildEmptyState(i + 1)),
+          children: List.generate(8, (i) => _buildSemesterList(i + 1)),
         ),
       ),
       // --- TOMBOL TAMBAH NILAI (Versi Lebih Panjang) ---
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          _showInputForm(context);
-        },
+        onPressed: () => _showInputForm(context),
         backgroundColor: const Color(0xFF89A8B2),
-        elevation: 2,
         icon: const Icon(Icons.add, color: Colors.white),
-        label: const Text(
-          "Tambah Nilai",
-          style: TextStyle(color: Colors.white),
-        ),
+        label:
+            const Text("Tambah Nilai", style: TextStyle(color: Colors.white)),
       ),
-    
-  void _showInputForm (BuildContext context) {
+    );
+  }
+
+  Widget _buildSemesterList(int sem) {
+    final filteredNilai = daftarNilai.where((n) => n.semester == sem).toList();
+
+    if (filteredNilai.isEmpty) {
+      return _buildEmptyState(sem); // Tampilkan ikon folder kalau kosong
+    }
+
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: filteredNilai.length,
+      itemBuilder: (context, index) {
+        return Card(
+          elevation: 0,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          margin: const EdgeInsets.only(bottom: 10),
+          child: ListTile(
+            title: Text(filteredNilai[index].nama,
+                style: const TextStyle(fontWeight: FontWeight.bold)),
+            subtitle: Text("SKS: ${filteredNilai[index].sks}"),
+            trailing: CircleAvatar(
+              backgroundColor: const Color(0xFF89A8B2),
+              child: Text(filteredNilai[index].huruf,
+                  style: const TextStyle(color: Colors.white)),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showInputForm(BuildContext context) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
           title: const Text(
             "Input Nilai Baru",
-            style: TextStyle(fontWeight: FontWeight.bold: Color(0xFF89A8B2)),
+            style: TextStyle(
+                fontWeight: FontWeight.bold, color: const Color(0xFF89A8B2)),
           ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                decoration: InputDecoration(
-                  labelText: "Nama Mata Kuliah",
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: _namaController,
+                  decoration: InputDecoration(
+                    labelText: "Nama Mata Kuliah",
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                  ),
                 ),
-              ),
-              const   SizedBox(height: 15),
-              TextField(
-                decoration: InputDecoration(
-                  labelText: "Nilai Huruf (A/B/C)",
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                const SizedBox(height: 15),
+                TextField(
+                  controller: _hurufController,
+                  decoration: InputDecoration(
+                    labelText: "Nilai Huruf (A/B/C)",
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 15),
-              TextField(
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  labelText: "Jumlah SKS",
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                ), 
-              ),
-            ],
+                const SizedBox(height: 15),
+                TextField(
+                  controller: _sksController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: "Jumlah SKS",
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                  ),
+                ),
+              ],
+            ),
           ),
           actions: [
             TextButton(
@@ -121,16 +176,34 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.pop(context); // Tutup dialog
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Data berhasil disimpan")),
-                );
+                final nama = _namaController.text;
+                final huruf = _hurufController.text.toUpperCase();
+                final sks = int.tryParse(_sksController.text) ?? 0;
+                final semester = _tabController.index + 1;
+
+                if (nama.isNotEmpty && huruf.isNotEmpty) {
+                  setState(() {
+                    daftarNilai.add(NilaiMatkul(nama, huruf, sks, semester));
+                  });
+
+                  _namaController.clear();
+                  _hurufController.clear();
+                  _sksController.clear();
+
+                  Navigator.pop(dialogContext);
+                  // Tutup dialog
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Data berhasil disimpan")),
+                  );
+                }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF89A8B2),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
               ),
-              child: const Text("Simpan", style: TextStyle(color: Colors.white)),
+              child:
+                  const Text("Simpan", style: TextStyle(color: Colors.white)),
             ),
           ],
         );
@@ -223,6 +296,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 20, 16, 10),
       padding: const EdgeInsets.all(20),
+      height: 220,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(15),
@@ -238,9 +312,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               color: Colors.black87,
             ),
           ),
-          const SizedBox(height: 100),
-          SizedBox(
-            height: 100,
+          const SizedBox(height: 20),
+          Expanded(
             child: LineChart(
               LineChartData(
                 gridData: const FlGridData(show: false),
@@ -250,6 +323,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   LineChartBarData(
                     spots: const [
                       FlSpot(0, 1),
+                      FlSpot(1, 3),
+                      FlSpot(2, 4)
                     ], // Titik tunggal seperti gambar 2
                     isCurved: true,
                     color: const Color(0xFF89A8B2),
@@ -340,11 +415,11 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   double get maxExtent => _tabBar.preferredSize.height;
   @override
   Widget build(
-    BuildContext context,
-    double shrinkOffset,
-    bool overlapsContent,
-  ) {
-    return Container(color: const Color(0xFFF1F0E8), child: _tabBar);
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Container(
+      color: const Color(0xFFF1F0E8),
+      child: _tabBar,
+    );
   }
 
   @override
