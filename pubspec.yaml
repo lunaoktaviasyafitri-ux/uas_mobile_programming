@@ -15,12 +15,14 @@ dependencies:
   google_fonts: ^6.2.1
   #Library ikon standar
   cupertino_icons: ^1.0.8
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
   flutter_lints: ^3.0.0
+  flutter_launcher_icons: ^0.13.1
 
 flutter_launcher_icons:
     android: "launcher_icon"
@@ -31,3 +33,4 @@ flutter_launcher_icons:
 flutter:
   # WAJIN TRUE agar ikon PDF dan Tambah Nilai muncul
   uses-material-design: true
+  

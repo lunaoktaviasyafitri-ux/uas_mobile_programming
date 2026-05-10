@@ -1,4 +1,4 @@
-package com.example.uas_mei2026
+package com.luna.saku_mahasiswa
 
 import io.flutter.embedding.android.FlutterActivity
 
